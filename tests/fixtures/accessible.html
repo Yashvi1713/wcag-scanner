@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An accessible page</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; color: #1a1a1a; background: #fff; }
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus { left: 1rem; top: 1rem; background: #fff; padding: 0.5rem; }
+  header, main, footer { padding: 1rem; max-width: 40rem; }
+  a { color: #1f4fd1; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #1f4fd1; outline-offset: 2px; }
+  button { background: #1f4fd1; color: #fff; border: 0; padding: 0.6rem 1.2rem; min-height: 44px; }
+  input { display: block; margin: 0.25rem 0 1rem; padding: 0.4rem; border: 2px solid #555; }
+  /* Custom radio: the real input is invisible, the label draws the control and its focus ring */
+  .radio { position: relative; padding-left: 2.5rem; margin: 0.5rem 0; }
+  .radio input { position: absolute; left: 0; top: 0; width: 2rem; height: 2rem; margin: 0; opacity: 0; }
+  .radio label { display: inline-block; padding: 0.4rem 0; }
+  .radio label::before { content: ""; position: absolute; left: 0; top: 0; width: 1.6rem; height: 1.6rem;
+    border: 2px solid #1a1a1a; border-radius: 50%; }
+  .radio input:focus + label::before { box-shadow: 0 0 0 4px #1f4fd1; }
+  /* Patterns that hide text on purpose and must not count as "cut off" */
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .collapsed { max-height: 0; overflow: hidden; visibility: hidden; }
+  /* A focusable card wrapper (BBC), and a decorative label that clicks pass through (Allbirds) */
+  .card:focus-visible { outline: 3px solid #1f4fd1; }
+  .card-inner, .label-pill { cursor: pointer; }
+  .label-pill { pointer-events: none; }
+  /* Two tall columns: Tab goes down the first, then up to the top of the second */
+  .columns { display: flex; gap: 4rem; }
+  .columns ul { list-style: none; padding: 0; }
+  .columns li { margin-bottom: 12rem; }
+</style>
+</head>
+<body>
+<a href="#main" class="skip">Skip to main content</a>
+<header>
+  <nav aria-label="Main"><a href="accessible.html">Home</a> <a href="accessible.html#about">About</a>
+    <button type="button" aria-expanded="false" aria-controls="more">More<span class="sr-only"> pages</span></button>
+    <ul id="more" class="collapsed"><li><a href="accessible.html#team">Our team</a></li></ul>
+  </nav>
+</header>
+<main id="main">
+  <h1>Welcome</h1>
+  <p id="about">This page follows the guidelines our checks look for.</p>
+  <fieldset>
+    <legend>Newsletter</legend>
+    <div class="radio"><input type="radio" id="weekly" name="freq"><label for="weekly">Weekly</label></div>
+    <div class="radio"><input type="radio" id="monthly" name="freq"><label for="monthly">Monthly</label></div>
+  </fieldset>
+  <div role="tablist" aria-label="Plans">
+    <button role="tab" id="tab-a" aria-selected="true" aria-controls="panel-a" tabindex="0">Basic</button>
+    <button role="tab" id="tab-b" aria-selected="false" aria-controls="panel-b" tabindex="-1">Pro</button>
+  </div>
+  <div role="tabpanel" id="panel-a" aria-labelledby="tab-a"><p>Basic plan details.</p></div>
+  <div role="tabpanel" id="panel-b" aria-labelledby="tab-b" hidden><p>Pro plan details.</p></div>
+  <div class="card" tabindex="0"><div class="card-inner">Tech stocks rise</div></div>
+  <p class="label-pill">New arrivals</p>
+  <div class="columns">
+    <ul><li><a href="accessible.html#a1">Benefits</a></li><li><a href="accessible.html#a2">Housing</a></li><li><a href="accessible.html#a3">Tax</a></li></ul>
+    <ul><li><a href="accessible.html#b1">Driving</a></li><li><a href="accessible.html#b2">Education</a></li><li><a href="accessible.html#b3">Health</a></li></ul>
+  </div>
+  <form role="search">
+    <label for="q">Search the site</label>
+    <input type="search" id="q" name="q">
+    <button type="submit">Search</button>
+  </form>
+</main>
+<footer><p>Contact: <a href="mailto:hello@example.org">hello@example.org</a></p></footer>
+</body>
+</html>

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% block title %}Accessibility report: {{ scan.start_url|host }} | WCAG Scanner{% endblock %}
+{% block content %}
+{% from "_macros.html" import badge, icon %}
+{% set labels = {"fail": "Fail", "review": "Needs review", "pass": "Pass", "manual": "Manual check", "na": "Not applicable"} %}
+<div class="wrap">
+<header class="cover">
+  <p class="kicker">Accessibility audit · WCAG 2.2 Level {{ scan.level }}</p>
+  <h1>{{ scan.start_url|host }}</h1>
+  <dl class="facts">
+    <div><dt>Date</dt><dd>{{ scan.finished_at|date }}</dd></div>
+    <div><dt>Pages</dt><dd>{{ s.pages_scanned }} scanned</dd></div>
+    <div><dt>Standard</dt><dd>WCAG 2.2 {{ scan.level }}</dd></div>
+    <div><dt>Engine</dt><dd>axe-core {{ scan.axe_version }}</dd></div>
+    <div><dt>AI review</dt><dd>{{ "On" if scan.ai_enabled else "Off" }}</dd></div>
+  </dl>
+  {% if not standalone %}
+  <p class="downloads">
+    <span>Download</span>
+    <a href="/scans/{{ scan.id }}/report.pdf">{{ icon("down") }} PDF</a>
+    <a href="/scans/{{ scan.id }}/report.html">{{ icon("down") }} HTML</a>
+    <a href="/scans/{{ scan.id }}/report.json">{{ icon("down") }} JSON</a>
+  </p>
+  {% endif %}
+</header>
+
+<div class="report-layout">
+<nav class="toc" aria-labelledby="toc-h">
+  <h2 id="toc-h">Contents</h2>
+  <ol>
+    {% for id, name in [("summary", "Summary"), ("criteria", "Criteria"), ("pages", "Pages"), ("issues", "Issues"), ("manual", "Manual checks"), ("method", "Method")] %}
+    <li><a href="#{{ id }}"><span class="num mono" aria-hidden="true">0{{ loop.index }}</span><span>{{ name }}</span></a></li>
+    {% endfor %}
+  </ol>
+</nav>
+
+<div class="report-body">
+<section id="summary" class="chapter" aria-labelledby="summary-h">
+  <div class="chapter-head"><span class="num" aria-hidden="true">01</span><h2 id="summary-h">Summary</h2></div>
+
+  <div class="verdict verdict-{{ s.verdict_status }}">
+    <p class="verdict-title">{{ icon(s.verdict_status) }} {{ s.verdict }}</p>
+    <p class="verdict-detail">{{ s.verdict_detail }}</p>
+  </div>
+
+  <ul class="figures" aria-label="Results for the {{ s.criteria|length }} success criteria">
+    {% for st, text in [("fail", "Fail"), ("review", "Need review"), ("pass", "Pass"), ("manual", "Manual check"), ("na", "Not applicable")] %}
+    <li><span class="figure-num">{{ s.counts[st] }}</span><span class="figure-label"><span class="key key-{{ st }}" aria-hidden="true"></span>{{ text }}</span></li>
+    {% endfor %}
+  </ul>
+  <p class="aside-figures">
+    <span><strong>{{ s.total_fail_findings }}</strong> failures found</span>
+    <span><strong>{{ s.total_review_findings }}</strong> items to review</span>
+    <span><strong>{{ s.pages_with_failures }}/{{ s.pages_scanned }}</strong> pages with failures</span>
+  </p>
+
+  <div class="map">
+    <h3>Every criterion, at a glance</h3>
+    <p>One square per success criterion. Squares with problems link to the details.</p>
+    {% for principle, rows in by_principle %}
+    {% set c = principle_counts[principle] %}
+    <div class="map-row">
+      <p class="map-name">{{ loop.index }}. {{ principle }}<span>{{ c.fail }} fail · {{ c.review }} review · {{ c.pass }} pass</span></p>
+      <ul class="cells" aria-label="{{ principle }} criteria">
+        {% for r in rows %}
+        <li>
+          {% if r.groups %}<a class="cell cell-{{ r.status }}" href="#c-{{ r.criterion.id }}" title="{{ r.criterion.id }} {{ r.criterion.name }}: {{ labels[r.status] }}">
+          {% else %}<span class="cell cell-{{ r.status }}" title="{{ r.criterion.id }} {{ r.criterion.name }}: {{ labels[r.status] }}">{% endif %}
+            <span>{{ r.criterion.id }}<span class="visually-hidden"> {{ r.criterion.name }}: {{ labels[r.status] }}</span></span>
+            {{ icon(r.status) }}
+          {% if r.groups %}</a>{% else %}</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="criteria" class="chapter" aria-labelledby="criteria-h">
+  <div class="chapter-head">
+    <span class="num" aria-hidden="true">02</span><h2 id="criteria-h">Results by criterion</h2>
+    <p><strong>Fail</strong>: a test found a definite violation. <strong>Needs review</strong>: something a person must judge. <strong>Pass</strong>: every test for it ran and found nothing, which is not proof of conformance. <strong>Manual check</strong>: no automated test exists.</p>
+  </div>
+  {% for principle, rows in by_principle %}
+  <div class="table-wrap" role="region" tabindex="0" aria-labelledby="crit-cap-{{ loop.index }}">
+  <table>
+    <caption id="crit-cap-{{ loop.index }}">{{ loop.index }}. {{ principle }}</caption>
+    <thead><tr><th scope="col">Success criterion</th><th scope="col">Level</th><th scope="col">Result</th><th scope="col">Tested by</th><th scope="col">Fail / review</th><th scope="col">Pages</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <th scope="row"><span class="sc">{{ r.criterion.id }}</span>{% if r.groups %}<a href="#c-{{ r.criterion.id }}">{{ r.criterion.name }}</a>{% else %}{{ r.criterion.name }}{% endif %}</th>
+        <td class="num">{{ r.criterion.level }}</td>
+        <td>{{ badge(r.status) }}</td>
+        <td class="methods">{% if not r.methods %}Manual check only{% elif r.status == "manual" %}{{ r.methods|join(", ") }}: nothing to test on these pages{% else %}{{ r.methods|join(", ") }}{% endif %}</td>
+        <td class="num">{% if r.fails or r.reviews %}{{ r.fails }} / {{ r.reviews }}{% else %}<span class="zero">–</span>{% endif %}</td>
+        <td class="num">{% if r.pages_failing %}{{ r.pages_failing }}{% else %}<span class="zero">–</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% endfor %}
+</section>
+
+<section id="pages" class="chapter" aria-labelledby="pages-h">
+  <div class="chapter-head">
+    <span class="num" aria-hidden="true">03</span><h2 id="pages-h">Results by page</h2>
+    <p>Failures on each page by WCAG principle. Items to review are in brackets.</p>
+  </div>
+  <div class="table-wrap" role="region" tabindex="0" aria-labelledby="pages-cap">
+  <table>
+    <caption id="pages-cap" class="visually-hidden">Failures on each page, by WCAG principle (items to review in brackets)</caption>
+    <thead><tr><th scope="col">Page</th>{% for p in principles %}<th scope="col">{{ p }}</th>{% endfor %}<th scope="col">Total</th></tr></thead>
+    <tbody>
+    {% for p in s.pages %}
+      <tr>
+        <th scope="row" class="page-cell"><a href="#page-{{ loop.index }}">{{ p.title or p.url|path }}</a><br><span class="muted">{{ p.url|path }}</span></th>
+        {% if p.error %}
+        <td colspan="{{ principles|length + 1 }}">Not scanned: {{ p.error }}</td>
+        {% else %}
+          {% for name in principles %}
+          <td class="num">{% if p.fails_by_principle[name] %}<span class="badge badge-fail">{{ icon("fail") }} {{ p.fails_by_principle[name] }}</span>{% else %}<span class="zero">0</span>{% endif %}{% if p.reviews_by_principle[name] %} <span class="muted">({{ p.reviews_by_principle[name] }})</span>{% endif %}</td>
+          {% endfor %}
+          <td class="num"><strong>{{ p.fails }}</strong>{% if p.reviews %} <span class="muted">({{ p.reviews }})</span>{% endif %}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Page by page</h3>
+  <div class="pages-list">
+  {% for p in s.pages %}
+  <details id="page-{{ loop.index }}">
+    <summary><span class="summary-title">{{ p.title or p.url|path }}</span>
+      {% if p.error %}<span class="badge badge-na">Not scanned</span>
+      {% elif p.fails %}<span class="badge badge-fail">{{ icon("fail") }} {{ p.fails }} failure{{ "s" if p.fails != 1 }}</span>
+      {% else %}<span class="badge badge-pass">{{ icon("pass") }} No failures</span>{% endif %}
+      {% if p.reviews %}<span class="badge badge-review">{{ icon("review") }} {{ p.reviews }} to review</span>{% endif %}
+    </summary>
+    <div class="detail-body">
+      <p class="page-facts"><a href="{{ p.url }}">{{ p.url }}</a></p>
+      {% if p.error %}<p>{{ p.error }}</p>{% else %}
+      <p class="page-facts">Failed: {% if p.failed_criteria %}{% for c in p.failed_criteria %}<a href="#c-{{ c }}">{{ c }}</a>{{ ", " if not loop.last }}{% endfor %}{% else %}none{% endif %} · {{ p.tab_stops }} tab stops</p>
+      {% for n in p.notes %}<p class="muted">{{ n }}</p>{% endfor %}
+      {% if p.screenshot %}
+      <img class="page-shot" loading="lazy" src="data:image/jpeg;base64,{{ p.screenshot }}"
+           alt="Screenshot of {{ p.url|path }} with elements that fail outlined in red">
+      {% endif %}
+      {% endif %}
+    </div>
+  </details>
+  {% endfor %}
+  </div>
+</section>
+
+<section id="issues" class="chapter" aria-labelledby="issues-h">
+  <div class="chapter-head">
+    <span class="num" aria-hidden="true">04</span><h2 id="issues-h">Issues in detail</h2>
+    <p>Failures first, then items to review. Each shows the page, the element, its HTML and the fix.</p>
+  </div>
+  {% if not issue_criteria %}<p class="empty">No issues were found.</p>{% endif %}
+  {% for r in issue_criteria %}
+  <article id="c-{{ r.criterion.id }}" class="issue" aria-labelledby="c-{{ r.criterion.id }}-h">
+    <div class="issue-head">
+      <h3 id="c-{{ r.criterion.id }}-h"><span class="sc">{{ r.criterion.id }} · Level {{ r.criterion.level }} · {{ r.criterion.principle }}</span>{{ r.criterion.name }}</h3>
+      {{ badge(r.status) }}
+    </div>
+    <p class="crit-meta">{{ r.criterion.manual }} <a href="{{ r.criterion.url }}">Understanding {{ r.criterion.id }}<span class="visually-hidden"> (W3C)</span></a></p>
+    {% for g in r.groups %}
+    <details class="rule-group"{% if loop.first and g.status == "fail" %} open{% endif %}>
+      <summary>{{ badge(g.status) }} <span>{{ g.title }}</span> <span class="count">{{ g.instances|length }} element{{ "s" if g.instances|length != 1 }}{% if g.instances|length != g.findings|length %}, {{ g.findings|length }} occurrences{% endif %}{% if g.impact %} · {{ g.impact }}{% endif %}</span></summary>
+      {% if g.source not in ("axe", "ai") and g.fix %}<p class="fix"><span class="label">Fix</span> {{ g.fix }}</p>{% endif %}
+      {% if g.help_url %}<p class="where"><a href="{{ g.help_url }}">Rule documentation: {{ g.rule }}</a></p>{% endif %}
+      <ol class="instances">
+      {% for inst in g.instances[:10] %}
+      {% set f = inst.finding %}
+        <li>
+          <p class="where">
+            {% if not inst.pages %}Whole site{% elif inst.pages|length == 1 %}<a href="{{ inst.pages[0] }}">{{ inst.pages[0]|path }}</a>{% else %}<strong>On {{ inst.pages|length }} pages:</strong> {% for u in inst.pages[:4] %}<a href="{{ u }}">{{ u|path }}</a>{{ ", " if not loop.last }}{% endfor %}{% if inst.pages|length > 4 %} and {{ inst.pages|length - 4 }} more{% endif %}{% endif %}{% if f.viewport %} · {{ f.viewport }}{% endif %}{% if f.confidence %} · AI confidence: {{ f.confidence }}{% endif %}
+          </p>
+          {% if f.source != "axe" %}<p>{{ f.message }}</p>{% endif %}
+          {% if f.selector %}<p><span class="label">Element</span><code>{{ f.selector }}</code></p>{% endif %}
+          {% if f.html %}<pre><code>{{ f.html }}</code></pre>{% endif %}
+          {% if f.source in ("axe", "ai") and f.fix %}<p class="fix"><span class="label">Fix</span> {{ f.fix }}</p>{% endif %}
+        </li>
+      {% endfor %}
+      </ol>
+      {% if g.instances|length > 10 %}<p class="muted">And {{ g.instances|length - 10 }} more elements. The JSON export lists every occurrence.</p>{% endif %}
+    </details>
+    {% endfor %}
+  </article>
+  {% endfor %}
+</section>
+
+<section id="manual" class="chapter" aria-labelledby="manual-h">
+  <div class="chapter-head">
+    <span class="num" aria-hidden="true">05</span><h2 id="manual-h">Manual checks</h2>
+    <p>No tool can fully verify these {{ s.counts.manual + s.counts.review }} criteria. A person should check each one, ideally with a keyboard and a screen reader (NVDA, JAWS or VoiceOver).</p>
+  </div>
+  <div class="table-wrap" role="region" tabindex="0" aria-labelledby="manual-cap">
+  <table>
+    <caption id="manual-cap" class="visually-hidden">Criteria needing human judgement</caption>
+    <thead><tr><th scope="col">Success criterion</th><th scope="col">Status</th><th scope="col">What to check</th></tr></thead>
+    <tbody>
+    {% for r in s.criteria if r.status in ("manual", "review") %}
+      <tr><th scope="row"><span class="sc">{{ r.criterion.id }}</span><a href="{{ r.criterion.url }}">{{ r.criterion.name }}</a></th><td>{{ badge(r.status) }}</td><td>{{ r.criterion.manual }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="method" class="chapter" aria-labelledby="method-h">
+  <div class="chapter-head"><span class="num" aria-hidden="true">06</span><h2 id="method-h">How this was tested</h2></div>
+  <ol class="method-steps">
+    <li><strong>Automated rules.</strong> The axe-core {{ scan.axe_version }} engine ran on every page at desktop (1280px) and phone (375px) sizes. It covers {{ scan.axe_coverage|length }} of the criteria at this level.</li>
+    <li><strong>Interaction tests.</strong> A scripted keyboard user pressed Tab through each page to find keyboard traps, missing focus indicators, hidden or obscured focus and controls the keyboard can't reach. The page was also tested at 200% zoom, with increased text spacing and at 320px wide (reflow), and checked for autoplaying media and endless animation.</li>
+    <li><strong>Cross-page tests.</strong> Pages were compared for unique titles, consistent navigation, consistent link names, consistent help and more than one way to find pages.</li>
+    <li><strong>AI review.</strong> {% if scan.ai_enabled %}Claude reviewed screenshots and content on up to 5 pages for meaningful alt text, clear link text, descriptive headings and use of colour. These findings are marked with a confidence level and should be confirmed by a person.{% else %}Not used for this scan.{% endif %}</li>
+    <li><strong>Manual checks.</strong> Criteria that no test covers are listed above for a person to check.</li>
+  </ol>
+  <div class="notes">
+    <div>
+      <h3>Limitations</h3>
+      <p>Automated testing finds roughly a third to a half of accessibility issues. "Pass" means no problems were detected, not that the criterion is met. Content behind logins, forms after submission, and states that need interaction (menus, dialogs, errors) were not tested.</p>
+      {% if scan.notes %}<h3>Scan notes</h3><ul>{% for n in scan.notes %}<li>{{ n }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+    <div>
+      <h3>Pages scanned</h3>
+      <ol class="mono">{% for p in scan.pages %}<li><a href="{{ p.url }}">{{ p.url|path }}</a>{% if p.error %}: {{ p.error }}{% endif %}</li>{% endfor %}</ol>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+</div>
+{% endblock %}

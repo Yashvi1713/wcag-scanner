@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- Demo site with deliberately planted accessibility failures. Each one is labelled PLANTED. -->
+<html>  <!-- PLANTED 3.1.1: no lang attribute -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maple Grove Library</title>
+<style>
+  body { font-family: Georgia, serif; margin: 0; color: #222; }
+  header { background: #2b4c3f; padding: 1rem; }
+  nav a { color: #fff; margin-right: 1rem; }
+  nav a:focus { outline: none; }                 /* PLANTED 2.4.7: focus indicator removed */
+  main { padding: 1rem; }
+  .hero { width: 600px; height: 160px; }         /* PLANTED 1.4.10: fixed width breaks reflow */
+  .notice { color: #aaa; }                       /* PLANTED 1.4.3: 2.3:1 contrast */
+  .card { height: 48px; width: 260px; overflow: hidden; border: 1px solid #ccc; padding: 0 0.5rem; }  /* PLANTED 1.4.12 */
+  .card p { margin: 0; }
+  .fake-btn { background: #2b4c3f; color: #fff; display: inline-block; padding: 8px 14px; cursor: pointer; }
+  footer { padding: 1rem; border-top: 1px solid #ccc; }
+</style>
+</head>
+<body>
+<header>
+  <nav>
+    <a href="index.html">Home</a><a href="events.html">Events</a><a href="contact.html">Contact</a>
+  </nav>
+</header>
+<main>
+  <h1>Welcome to Maple Grove Library</h1>
+  <img src="hero.svg" class="hero">  <!-- PLANTED 1.1.1: no alt; 1.4.5: image of text -->
+  <p class="notice">Library hours change on public holidays.</p>
+  <div class="card"><p>Story time every Saturday at 10am for children aged 5 to 11.</p></div>
+  <p>To see what's on this month, <a href="events.html">click here</a>. To ask a librarian, <a href="contact.html">click here</a>.</p>  <!-- PLANTED 2.4.4 (AI) -->
+  <img src="reading.svg" alt="image" width="240" height="160">  <!-- PLANTED 1.1.1 (AI): meaningless alt -->
+  <h2>Newsletter</h2>
+  <div class="fake-btn" onclick="alert('Subscribed!')">Subscribe</div>  <!-- PLANTED 2.1.1: mouse-only control -->
+</main>
+<footer>
+  <a href="contact.html">Contact us</a> · <a href="tel:+15550100">Call 555 0100</a>
+</footer>
+</body>
+</html>

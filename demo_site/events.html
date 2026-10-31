@@ -1,0 +1,50 @@
+<!doctype html>
+<!-- Demo site with deliberately planted accessibility failures. Each one is labelled PLANTED. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maple Grove Library</title>  <!-- PLANTED 2.4.2: same title as the home page -->
+<style>
+  body { font-family: Georgia, serif; margin: 0; color: #222; padding-bottom: 100px; }
+  header { background: #2b4c3f; padding: 1rem; }
+  nav a { color: #fff; margin-right: 1rem; }
+  main { padding: 1rem; }
+  .ticker { background: #f4d58d; padding: 1rem; font-size: 1.2rem; animation: pulse 2s ease-in-out infinite; }  /* PLANTED 2.2.2 */
+  @keyframes pulse { 50% { opacity: 0.6; } }
+  .events li { margin: 1.4rem 0; }
+  .promo { position: fixed; left: 0; right: 0; bottom: 0; height: 90px; background: #fff3c4;
+           border-top: 2px solid #c9a227; padding: 1rem; }  /* PLANTED 2.4.11: covers focused links */
+  footer { padding: 1rem; border-top: 1px solid #ccc; }
+</style>
+</head>
+<body>
+<header>
+  <nav>
+    <a href="events.html">Events</a><a href="index.html">Home</a><a href="contact.html">Contact</a>  <!-- PLANTED 3.2.3: order changed -->
+  </nav>
+</header>
+<main>
+  <h1>Events</h1>
+  <p class="ticker">New: Summer Reading Challenge now open!</p>
+  <ul class="events">
+    <li><a href="#e1">Toddler rhyme time, Monday 10am</a></li>
+    <li><a href="#e2">Coding club for teens, Monday 4pm</a></li>
+    <li><a href="#e3">Local history talk, Tuesday 7pm</a></li>
+    <li><a href="#e4">Knit and natter, Wednesday 2pm</a></li>
+    <li><a href="#e5">Job search help, Wednesday 5pm</a></li>
+    <li><a href="#e6">Book club, Thursday 6pm</a></li>
+    <li><a href="#e7">Family film afternoon, Friday 3pm</a></li>
+    <li><a href="#e8">Story time, Saturday 10am</a></li>
+    <li><a href="#e9">Chess for beginners, Saturday 2pm</a></li>
+    <li><a href="#e10">Author visit, Sunday 11am</a></li>
+    <li><a href="#e11">Poetry open mic, Sunday 4pm</a></li>
+    <li><a href="#e12">Digital skills drop-in, Sunday 5pm</a></li>
+  </ul>
+</main>
+<div class="promo">Become a library member today, it's free.</div>
+<footer>
+  <a href="contact.html">Contact us</a> · <a href="tel:+15550100">Call 555 0100</a>
+</footer>
+</body>
+</html>

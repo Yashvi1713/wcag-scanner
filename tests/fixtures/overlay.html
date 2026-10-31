@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- Patterns from real shops: a full-screen popup that isn't a dialog, and a cart drawer parked off-screen. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overlay patterns</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; color: #1a1a1a; background: #fff; }
+  main { padding: 1rem; }
+  a:focus-visible { outline: 3px solid #1f4fd1; }
+  .wide { width: 700px; height: 40px; background: #eee; }
+  /* Fixed and moved off-screen: can't cause horizontal scrolling, so it must not be blamed for it */
+  .drawer { position: fixed; top: 0; right: 0; width: 300px; height: 100vh; transform: translateX(100%);
+    background: #fff; visibility: hidden; }
+  /* Covers the whole page, but focus is never kept inside it */
+  .popup { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); color: #fff; padding: 4rem 1rem; font-size: 1.5rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Shop</h1>
+  <div class="wide">Wide promo strip</div>
+  <ul>
+    <li><a href="#p1">Product 1</a></li><li><a href="#p2">Product 2</a></li><li><a href="#p3">Product 3</a></li>
+    <li><a href="#p4">Product 4</a></li><li><a href="#p5">Product 5</a></li><li><a href="#p6">Product 6</a></li>
+    <li><a href="#p7">Product 7</a></li><li><a href="#p8">Product 8</a></li><li><a href="#p9">Product 9</a></li>
+    <li><a href="#p10">Product 10</a></li><li><a href="#p11">Product 11</a></li><li><a href="#p12">Product 12</a></li>
+  </ul>
+</main>
+<div class="drawer"><p>Your cart is empty</p></div>
+<div class="popup"><p>Where are we shipping to?</p></div>
+</body>
+</html>

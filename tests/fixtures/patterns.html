@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- Interaction patterns from real sites: autoplaying media, an embedded frame, content that fades in
+     on focus, and a modal dialog that keeps focus inside until Escape closes it. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interaction patterns</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; color: #1a1a1a; background: #fff; }
+  main { padding: 1rem; max-width: 40rem; }
+  a { color: #1f4fd1; }
+  a:focus-visible, button:focus-visible { outline: 3px solid #1f4fd1; outline-offset: 2px; }
+  button { font: inherit; padding: 0.5rem 1rem; min-height: 44px; }
+  .fade { opacity: 0; transition: opacity 0.2s; }
+  .fade:focus-within { opacity: 1; }
+  [role="dialog"] { border: 2px solid #1a1a1a; padding: 1rem; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Interaction patterns</h1>
+  <audio src="tone.webm" autoplay loop></audio>
+  <video src="clip.webm" autoplay muted loop width="160" height="90"></video>
+  <p><a href="#first">First link</a></p>
+  <iframe title="Embedded sign-up form" width="320" height="70"
+          srcdoc="<button>One</button> <button>Two</button>"></iframe>
+  <p><a href="#after-frame">After the frame</a></p>
+  <p class="fade"><a href="#faded">Fades in when focused</a></p>
+  <div role="dialog" aria-modal="true" aria-label="Newsletter" id="dialog">
+    <p>Get our newsletter?</p>
+    <button type="button" id="subscribe">Subscribe</button>
+    <button type="button" id="close">Close</button>
+  </div>
+  <p><a id="after-dialog" href="#after-dialog">After the dialog</a></p>
+</main>
+<script>
+  // A modal dialog: Tab cycles between its buttons, Escape closes it.
+  const dialog = document.getElementById("dialog");
+  const [subscribe, close] = [document.getElementById("subscribe"), document.getElementById("close")];
+  dialog.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") { e.preventDefault(); (document.activeElement === subscribe ? close : subscribe).focus(); }
+    if (e.key === "Escape") { dialog.hidden = true; document.getElementById("after-dialog").focus(); }
+  });
+</script>
+</body>
+</html>

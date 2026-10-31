@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Scanning {{ scan.url }} | WCAG Scanner{% endblock %}
+{% block content %}
+{% set p = scan.progress or {} %}
+{% set stage = p.stage or "crawl" %}
+{% set order = ["crawl", "page", "sitewide"] %}
+{% set at = order.index(stage) if stage in order else 0 %}
+{% set state_text = {"done": "Done", "active": "Running", "todo": "Waiting"} %}
+<div class="wrap">
+<div class="progress-wrap">
+  <p class="kicker">Audit in progress</p>
+  <h1>{{ scan.url|host }}</h1>
+  <p class="lede">The report opens here when it's ready. You can leave and come back to it from Past audits.</p>
+
+  <div class="progress-figure">
+    <label for="bar" class="field-label">Pages tested</label>
+    <span class="progress-pct" id="pct" aria-hidden="true">{{ ((p.done or 0) * 100 // (p.total or 1)) }}%</span>
+  </div>
+  <progress id="bar" max="{{ p.total or 1 }}" value="{{ p.done or 0 }}">{{ p.done or 0 }} of {{ p.total or 1 }} pages</progress>
+  <p class="status-line" id="status" role="status" aria-live="polite">{{ p.message or "Starting" }}</p>
+  <noscript><p><a href="/scans/{{ scan.id }}">Refresh this page</a> to see whether the audit has finished.</p></noscript>
+
+  <ol class="steps" aria-label="Stages">
+    {% for key, title, text in [
+      ("crawl", "Finding pages", "robots.txt, the sitemap and links from the start page."),
+      ("page", "Testing each page", "Rules, keyboard walk, zoom, text spacing and reflow."),
+      ("sitewide", "Comparing pages", "Navigation, titles, names and help, then the verdict for every criterion.")] %}
+    {% set st = "done" if loop.index0 < at else ("active" if loop.index0 == at else "todo") %}
+    <li class="step" data-step="{{ key }}" data-state="{{ st }}">
+      <span class="num" aria-hidden="true">0{{ loop.index }}</span>
+      <div><strong>{{ title }}</strong><p>{{ text }}</p></div>
+      <span class="step-state">{{ state_text[st] }}</span>
+    </li>
+    {% endfor %}
+  </ol>
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const bar = document.getElementById("bar");
+  const pct = document.getElementById("pct");
+  const status = document.getElementById("status");
+  const order = ["crawl", "page", "sitewide"];
+  const words = { done: "Done", active: "Running", todo: "Waiting" };
+  let last = status.textContent;
+  async function poll() {
+    try {
+      const r = await fetch("/scans/{{ scan.id }}/status", { cache: "no-store" });
+      const data = await r.json();
+      if (data.status === "done" || data.status === "error") { location.reload(); return; }
+      const p = data.progress || {};
+      bar.max = Math.max(p.total || 1, 1);
+      bar.value = p.done || 0;
+      pct.textContent = Math.round(100 * (p.done || 0) / bar.max) + "%";
+      const at = Math.max(order.indexOf(p.stage || "crawl"), 0);
+      document.querySelectorAll(".step").forEach((el) => {
+        const i = order.indexOf(el.dataset.step);
+        const state = i < at ? "done" : i === at ? "active" : "todo";
+        el.dataset.state = state;
+        el.querySelector(".step-state").textContent = words[state];
+      });
+      // Only announce page-level changes so screen readers aren't flooded.
+      const text = `${p.message || "Working"} (${p.done || 0} of ${p.total || 1} pages)`;
+      if (text !== last) { status.textContent = text; last = text; }
+    } catch (_) { /* keep polling */ }
+    setTimeout(poll, 2000);
+  }
+  setTimeout(poll, 1500);
+})();
+</script>
+{% endblock %}
