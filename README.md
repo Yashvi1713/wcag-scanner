@@ -38,6 +38,75 @@ Each problem shows the page, the exact element, its HTML, and how to fix it:
 
 Reports can be downloaded as **PDF**, **HTML** or **JSON**.
 
+## Highlights
+
+- **Full-stack:** a **React + TypeScript** single-page app on a **Python FastAPI** back end, with a headless-browser scanning engine and an optional **AI layer (Claude)**.
+- **Five layers of testing:** automated rules (axe-core), a scripted keyboard user, zoom/text-spacing/reflow tests, cross-page consistency checks, and AI judgement. Many scanners stop at the first.
+- **Honest results:** every one of the 55 WCAG 2.2 AA criteria gets Fail, Needs review, Pass, Manual check or Not applicable, and a site that couldn't be loaded is never reported as passing.
+- **Secure by design:** refuses to scan private networks or cloud metadata addresses (SSRF protection), re-checks every redirect, caps concurrent scans and sets security headers. The container runs as an unprivileged user.
+- **Built to survive real websites:** a time budget per page, a browser pool that restarts Chromium if it crashes, and plain-language reasons for 404s, logins and bot walls.
+- **213 automated tests:** 189 Python (95% branch coverage) and 24 React, including property-based tests, browser tests against real-world patterns, and an API contract test between back end and front end.
+- **Accessible itself:** every screen of the app is audited by the scanner in a real browser and must have zero findings, enforced by a test.
+- **Easy to run:** one command with Docker (two-stage build), or Python + Node locally.
+
+## Tech stack
+
+### Front end
+
+| Technology | Version | What it does here | Why it was chosen |
+|---|---|---|---|
+| [React](https://react.dev/) | 19.3 | The whole user interface: the form, live scan progress and the report | The industry-standard UI library; components keep each part of the report small and testable |
+| [TypeScript](https://www.typescriptlang.org/) | 5.9 | Types for every component and every API response | Catches mistakes before they reach the browser. Runs in **strict** mode with unchecked-index and exact-optional checks |
+| [Vite](https://vite.dev/) | 8.3 | Development server with instant reload, and the production build | Fast builds (under a second); output is plain static files that FastAPI serves |
+| [React Router](https://reactrouter.com/) | 7.18 | Pages: home, a scan's progress and report, not found | Standard client-side routing; the app manages focus and tab titles on every route change for screen reader users |
+| [TanStack Query](https://tanstack.com/query) | 5.105 | Fetching data, polling a running scan every 2 seconds, caching finished reports | Handles loading, errors, retries and polling declaratively, instead of hand-written effects |
+| CSS (hand-written) | | Layout, light and dark themes, print styles | No UI framework: full control over contrast, focus styles and semantics, and one stylesheet shared with the downloadable report |
+
+### Back end
+
+| Technology | Version | What it does here | Why it was chosen |
+|---|---|---|---|
+| [Python](https://www.python.org/) | 3.11+ | The scanner, the API and the report logic | Strong async support, and first-class Playwright and Anthropic SDKs |
+| [FastAPI](https://fastapi.tiangolo.com/) | 0.162 | The JSON API and file downloads; serves the built React app | Async, fast, and generates interactive API documentation (`/docs`) from the code |
+| [Pydantic](https://docs.pydantic.dev/) | 2.14 | Schemas for every request, response and scan result | Validates data at every boundary; the same models document the API |
+| [Uvicorn](https://www.uvicorn.org/) | 0.54 | The web server | The standard production server for FastAPI |
+| [SQLite](https://sqlite.org/) | 3.50 | Scan history and results | Zero setup, one file. Runs in WAL mode so the progress page can read while a scan writes |
+| [Jinja2](https://jinja.palletsprojects.com/) | 3.1 | The downloadable HTML report, also the source of the PDF | Self-contained documents that work offline and print, without JavaScript |
+| [HTTPX](https://www.python-httpx.org/) | 0.28 | Fetching robots.txt and sitemaps | Async HTTP client with hooks, used to check every redirect against the SSRF guard |
+
+### Scanning engine
+
+| Technology | Version | What it does here | Why it was chosen |
+|---|---|---|---|
+| [Playwright](https://playwright.dev/python/) + Chromium | 1.64 | Loads each page in a real browser, presses Tab like a keyboard user, resizes for zoom and reflow, takes screenshots, prints PDFs | Contrast, focus and layout only exist on a rendered page, and most sites render with JavaScript |
+| [axe-core](https://github.com/dequelabs/axe-core) | 4.10 | The automated rules layer, run at desktop and phone widths | The industry-standard accessibility engine (inside Google Lighthouse); rules are tagged with WCAG criteria |
+| Custom in-page probe (JavaScript) | | Keyboard walk, focus visibility, obscured focus, clipped text, reflow, autoplaying media | Covers WCAG criteria that axe-core can't test |
+
+### AI
+
+| Technology | Version | What it does here | Why it was chosen |
+|---|---|---|---|
+| [Claude](https://www.anthropic.com/claude) (Anthropic API), model `claude-opus-5-5` | SDK 2.3 | Optional review of screenshots, alt text, link text and headings for six criteria that need judgement | Reads images and text together; structured output gives typed findings with a confidence level, mapped back to the exact element |
+
+### Testing and code quality
+
+| Technology | Version | What it does here |
+|---|---|---|
+| [pytest](https://pytest.org/) + pytest-cov | 9.2 / 7.1 | 189 Python tests: unit, API, integration and real-browser tests, with a 90% branch-coverage gate (currently 95%) |
+| [Hypothesis](https://hypothesis.readthedocs.io/) | 6.170 | Property-based tests: generated URLs check that the crawler's URL handling never crashes and always gives the same answer |
+| [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/) | 5.0 / 16.3 | 24 React tests that use the app the way a person would: finding things by role and label, typing and clicking |
+| axe-core in tests | 4.14 | Every React screen is checked for accessibility violations inside the unit tests |
+| [Ruff](https://docs.astral.sh/ruff/) | 0.17 | Python linting and formatting |
+| [mypy](https://mypy-lang.org/) | 2.4 | Python type checking |
+| [ESLint](https://eslint.org/) + jsx-a11y + react-hooks | 9.39 | React linting, including accessibility rules for JSX |
+| [Prettier](https://prettier.io/) | 3.9 | Front-end formatting |
+
+### Delivery
+
+| Technology | What it does here |
+|---|---|
+| [Docker](https://www.docker.com/) | Two-stage build: Node 22 builds the React app, then the official Playwright image (Chromium and its system libraries) runs the server as an unprivileged user, with a health check |
+
 ## Run it yourself
 
 It takes about 5 minutes. Choose **one** of the two options.
@@ -125,16 +194,9 @@ cd frontend && npm test
 
 ## For technical reviewers
 
-### Technology
+### Architecture
 
-| Part | Built with |
-|---|---|
-| Front end | **React 19** and **TypeScript** (strict), built with **Vite**. **React Router** for pages, **TanStack Query** for data fetching and progress polling. Hand-written CSS with no UI framework, light and dark themes. |
-| Back end | **Python** with **FastAPI**: a typed JSON API (interactive docs at `/docs` on a running server), and the downloadable reports |
-| Scanning | **Playwright** driving headless **Chromium**, the **axe-core** rules engine, and custom in-page checks in JavaScript |
-| AI review | **Claude** (Anthropic API), structured output |
-| Storage | **SQLite** |
-| Quality | pytest, Hypothesis, ruff, mypy · Vitest, React Testing Library, axe-core, ESLint (with jsx-a11y), Prettier |
+The technologies are listed in [Tech stack](#tech-stack) above. How they fit together:
 
 ```
  Browser                          Server (one process)
