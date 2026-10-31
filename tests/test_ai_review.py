@@ -107,7 +107,7 @@ def test_a_failing_ai_layer_keeps_every_other_finding(server):
 
 @pytest.mark.browser
 def test_pdf_export_is_a_real_pdf(demo_scan):
-    pdf = asyncio.run(render_pdf(render_report(demo_scan, standalone=True)))
+    pdf = asyncio.run(render_pdf(render_report(demo_scan)))
     assert pdf.startswith(b"%PDF") and len(pdf) > 50_000
 
 

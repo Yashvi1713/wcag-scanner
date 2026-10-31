@@ -31,7 +31,8 @@ def render(template: str, **context) -> str:
     return env.get_template(template).render(**context)
 
 
-def render_report(scan: ScanResult, standalone: bool = False, summary: Summary | None = None) -> str:
+def render_report(scan: ScanResult, summary: Summary | None = None) -> str:
+    """The report as one self-contained HTML document: the HTML download, and the source of the PDF."""
     summary = summary or summarize(scan)
     by_principle = [(name, list(rows)) for name, rows in groupby(summary.criteria, key=lambda r: r.criterion.principle)]
     principle_counts = {
@@ -49,7 +50,6 @@ def render_report(scan: ScanResult, standalone: bool = False, summary: Summary |
         issue_criteria=issue_criteria,
         principle_counts=principle_counts,
         principles=list(PRINCIPLES.values()),
-        standalone=standalone,
     )
 
 

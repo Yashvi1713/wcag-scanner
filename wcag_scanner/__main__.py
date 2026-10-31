@@ -102,7 +102,7 @@ async def run_scan(args: argparse.Namespace) -> int:
         if p.error:
             print(f"  skipped {p.url}: {p.error}")
 
-    html = render_report(result, standalone=True, summary=summary)
+    html = render_report(result, summary=summary)
     args.out.write_text(html, encoding="utf-8")
     print(f"\nReport: {args.out.resolve()}")
     if args.json:

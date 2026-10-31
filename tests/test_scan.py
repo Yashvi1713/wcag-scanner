@@ -1,14 +1,19 @@
 """End-to-end: scan the demo site and check every planted failure is reported."""
 
 import asyncio
+import threading
+import time
 from urllib.parse import urlsplit
 
 import pytest
+import uvicorn
 
 from tests.conftest import ROOT
+from wcag_scanner import storage, web
 from wcag_scanner.aggregator import summarize
-from wcag_scanner.report import render, render_report
+from wcag_scanner.report import render_report
 from wcag_scanner.scanner import ScanOptions, scan_site
+from wcag_scanner.settings import settings
 
 pytestmark = pytest.mark.browser
 
@@ -81,27 +86,53 @@ def test_popup_is_one_finding_and_fixed_drawer_is_not_blamed_for_reflow(server):
     assert any("wide" in (f.html or "") for f in reflow)
 
 
-@pytest.mark.parametrize("page", ["report", "home"])
-def test_scanner_ui_is_accessible_itself(page, demo_scan, server):
-    """Our own pages must pass the same checks we report on, with nothing left to review."""
-    if page == "report":
-        html = render_report(demo_scan, standalone=True)
-        assert "Does not meet WCAG 2.2 Level AA" in html
-    else:
-        html = render(
-            "index.html",
-            scans=[],
-            ai_available=False,
-            error=None,
-            url="",
-            demo_url="http://example.com/demo-site/",
-            max_pages=50,
-        )
-    out = ROOT / "tests" / "fixtures" / f"_{page}.html"
+def test_downloaded_report_is_accessible_itself(demo_scan, server):
+    """The HTML/PDF report must pass the same checks it reports on, with nothing left to review."""
+    html = render_report(demo_scan)
+    assert "Does not meet WCAG 2.2 Level AA" in html
+    out = ROOT / "tests" / "fixtures" / "_report.html"
     out.write_text(html)
     try:
-        scan = asyncio.run(scan_site(f"{server}/tests/fixtures/_{page}.html", ScanOptions(max_pages=1)))
+        scan = asyncio.run(scan_site(f"{server}/tests/fixtures/_report.html", ScanOptions(max_pages=1)))
     finally:
         out.unlink()
-    issues = [(f.status, f.criterion, f.rule, f.selector) for p in scan.pages for f in p.findings]
-    assert issues == []
+    assert _issues(scan) == []
+
+
+@pytest.fixture
+def live_app(tmp_path, monkeypatch, demo_scan):
+    """The real server with the built React app, holding one finished and one running scan."""
+    if not (settings.frontend_dist / "index.html").exists():
+        pytest.skip("The React app isn't built: run `npm ci && npm run build` in frontend/")
+    monkeypatch.setattr(storage, "DB_PATH", tmp_path / "scans.db")
+    server = uvicorn.Server(uvicorn.Config(web.app, host="127.0.0.1", port=0, log_level="warning"))
+    thread = threading.Thread(target=server.run, daemon=True)
+    thread.start()
+    while not server.started:
+        time.sleep(0.05)
+    port = server.servers[0].sockets[0].getsockname()[1]
+    storage.create("aaaaaaaaaaaa", demo_scan.start_url)
+    storage.finish("aaaaaaaaaaaa", demo_scan, fails=1, verdict="fail")
+    storage.create("bbbbbbbbbbbb", demo_scan.start_url)
+    storage.set_status("bbbbbbbbbbbb", "running")
+    storage.update_progress(
+        "bbbbbbbbbbbb", {"stage": "page", "message": "Scanning /events.html", "done": 1, "total": 3}
+    )
+    yield f"http://127.0.0.1:{port}"
+    server.should_exit = True
+    thread.join(10)
+
+
+@pytest.mark.parametrize(
+    ("page", "path"), [("home", "/"), ("progress", "/scans/bbbbbbbbbbbb"), ("report", "/scans/aaaaaaaaaaaa")]
+)
+def test_react_app_is_accessible_itself(live_app, page, path):
+    """Every screen of the React app, rendered in a real browser, passes the scanner with nothing to review."""
+    scan = asyncio.run(scan_site(live_app + path, ScanOptions(max_pages=1)))
+    assert scan.pages[0].error is None, scan.pages[0].error
+    assert scan.pages[0].tab_stops >= 3  # the app rendered (an empty shell would have nothing to tab to)
+    assert _issues(scan) == []
+
+
+def _issues(scan):
+    return [(f.status, f.criterion, f.rule, f.selector) for p in scan.pages for f in p.findings]

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -66,6 +67,14 @@ def _init(path: Path) -> None:
     finally:
         conn.close()
     _ready.add(path)
+
+
+_SCAN_ID = re.compile(r"^[0-9a-f]{12}$")
+
+
+def valid_id(scan_id: str) -> bool:
+    """Scan IDs are 12 hex characters; anything else is rejected before touching the database."""
+    return bool(_SCAN_ID.match(scan_id))
 
 
 def _now() -> str:

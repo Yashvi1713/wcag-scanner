@@ -4,9 +4,13 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
+from typing import Literal
 
 from .criteria import CUSTOM_COVERAGE, MEDIA_CRITERIA, PRINCIPLES, Criterion, in_scope, sort_key
-from .models import Finding, ScanResult
+from .models import Finding, FindingStatus, ScanResult
+
+Status = Literal["fail", "review", "pass", "manual", "na"]
+VerdictStatus = Literal["fail", "review", "pass", "error"]
 
 IMPACT_RANK = {"critical": 0, "serious": 1, "moderate": 2, "minor": 3, None: 4}
 METHOD_LABELS = {
@@ -72,7 +76,7 @@ class RuleGroup:
     fix: str | None
     help_url: str | None
     source: str
-    status: str
+    status: FindingStatus
     impact: str | None
     findings: list[Finding]
     instances: list[Instance] = field(default_factory=list)
@@ -81,7 +85,7 @@ class RuleGroup:
 @dataclass
 class CriterionResult:
     criterion: Criterion
-    status: str  # fail | review | pass | manual | na
+    status: Status
     methods: list[str]
     fails: int = 0
     reviews: int = 0
@@ -108,9 +112,9 @@ class PageRow:
 class Summary:
     verdict: str
     verdict_detail: str
-    verdict_status: str  # fail | review | pass | error (nothing could be scanned)
+    verdict_status: VerdictStatus  # "error": nothing could be scanned
     criteria: list[CriterionResult]
-    counts: dict[str, int]
+    counts: dict[Status, int]
     pages: list[PageRow]
     total_fail_findings: int
     total_review_findings: int
@@ -131,6 +135,7 @@ def summarize(scan: ScanResult) -> Summary:
         found = by_criterion.get(crit.id, [])
         fails = [f for f in found if f.status == "fail"]
         reviews = [f for f in found if f.status == "review"]
+        status: Status
         if fails:
             status = "fail"
         elif reviews:
@@ -187,6 +192,7 @@ def summarize(scan: ScanResult) -> Summary:
         )
 
     pages_scanned = sum(1 for p in scan.pages if not p.error)
+    verdict_status: VerdictStatus
     if not pages_scanned:
         # Never report "passed" for a site we couldn't load: no test ran, so nothing passed.
         verdict_status = "error"
@@ -244,7 +250,7 @@ def _methods(criterion_id: str, scan: ScanResult) -> list[str]:
 
 
 def _group(findings: list[Finding]) -> list[RuleGroup]:
-    groups: dict[tuple[str, str], list[Finding]] = defaultdict(list)
+    groups: dict[tuple[str, FindingStatus], list[Finding]] = defaultdict(list)
     for f in findings:
         groups[(f.rule, f.status)].append(f)
     out = [

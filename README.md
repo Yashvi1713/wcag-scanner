@@ -55,15 +55,20 @@ docker run -p 8000:8000 wcag-scanner
 
 Then open **http://localhost:8000** in your browser. The first build downloads a browser and takes a few minutes.
 
-### Option B: Python
+### Option B: Python and Node.js
 
-Needs **Python 3.11 or newer** ([python.org/downloads](https://www.python.org/downloads/)). The Python that comes with macOS is 3.9, which is too old: check with `python3 --version`.
+Needs **Python 3.11 or newer** ([python.org/downloads](https://www.python.org/downloads/)) and **Node.js 20 or newer** ([nodejs.org](https://nodejs.org/)). The Python that comes with macOS is 3.9, which is too old: check with `python3 --version` and `node --version`.
 
 **macOS / Linux**
 
 ```bash
 git clone https://github.com/Yashvi1713/wcag-scanner.git
 cd wcag-scanner
+
+# The React front end
+cd frontend && npm ci && npm run build && cd ..
+
+# The Python back end, with its browser
 python3 -m venv .venv
 .venv/bin/pip install -e ".[dev]"
 .venv/bin/playwright install chromium
@@ -75,6 +80,9 @@ python3 -m venv .venv
 ```powershell
 git clone https://github.com/Yashvi1713/wcag-scanner.git
 cd wcag-scanner
+
+cd frontend; npm ci; npm run build; cd ..
+
 py -3.12 -m venv .venv
 .venv\Scripts\pip install -e ".[dev]"
 .venv\Scripts\playwright install chromium
@@ -97,10 +105,11 @@ Then open **http://127.0.0.1:8000** in your browser.
 .venv/bin/python -m wcag_scanner scan https://www.gov.uk --pages 5 --pdf report.pdf
 ```
 
-**Run the tests** (about 180 automated tests, about one minute):
+**Run the tests** (about 210 automated tests: Python in about a minute, React in a few seconds):
 
 ```bash
 .venv/bin/python -m pytest
+cd frontend && npm test
 ```
 
 ### If something goes wrong
@@ -109,10 +118,33 @@ Then open **http://127.0.0.1:8000** in your browser.
 |---|---|
 | `File "setup.py" or "setup.cfg" not found`, or `requires a different Python` | Your Python is older than 3.11 (macOS ships 3.9). Install a newer one, delete the `.venv` folder and run the steps again with the new Python (for example `python3.12 -m venv .venv`). |
 | `Executable doesn't exist ... chromium` | Run the `playwright install chromium` step. |
+| The page says "The app isn't built yet" | Run `npm ci && npm run build` in the `frontend` folder, then reload. |
+| `npm: command not found` | Install Node.js 20 or newer from [nodejs.org](https://nodejs.org/). |
 | `Address already in use` | Something else uses port 8000: add `--port 8001` to the `serve` command and open that port. |
 | A site says "Blocked by bot protection" | Some sites refuse automated browsers. That's reported honestly rather than guessed at. |
 
 ## For technical reviewers
+
+### Technology
+
+| Part | Built with |
+|---|---|
+| Front end | **React 19** and **TypeScript** (strict), built with **Vite**. **React Router** for pages, **TanStack Query** for data fetching and progress polling. Hand-written CSS with no UI framework, light and dark themes. |
+| Back end | **Python** with **FastAPI**: a typed JSON API (interactive docs at `/docs` on a running server), and the downloadable reports |
+| Scanning | **Playwright** driving headless **Chromium**, the **axe-core** rules engine, and custom in-page checks in JavaScript |
+| AI review | **Claude** (Anthropic API), structured output |
+| Storage | **SQLite** |
+| Quality | pytest, Hypothesis, ruff, mypy · Vitest, React Testing Library, axe-core, ESLint (with jsx-a11y), Prettier |
+
+```
+ Browser                          Server (one process)
+┌──────────────────────┐         ┌─────────────────────────────────────────────────────┐
+│ React app            │  JSON   │ FastAPI  /api/...  ─► scanner (Playwright + Chromium)│
+│  Home ─ Progress ─   │ ◄─────► │                     ─► SQLite (scan history)         │
+│  Report              │         │          /scans/{id}/report.pdf|html|json (documents)│
+└──────────────────────┘         │          serves the built React app                  │
+                                 └─────────────────────────────────────────────────────┘
+```
 
 ### How it works: five layers
 
@@ -124,7 +156,7 @@ Each layer catches problems the others can't.
 | 2. Interaction tests | Acts like a keyboard user: presses Tab through the page to find traps, missing or hidden focus, focus covered by sticky bars and mouse-only controls. Then 200% zoom, WCAG text spacing, 320px reflow, autoplaying sound, endless motion and placeholder-only labels. | `interaction.py`, `static/probe.js` |
 | 3. Cross-page tests | Unique titles, navigation in a consistent order, consistent names for the same links, consistent help, more than one way to find pages. | `sitewide.py` |
 | 4. AI review (optional) | Claude judges what rules can't: *is this alt text meaningful? is "click here" clear? is this an image of text?* Structured output, with a confidence level on every finding. | `ai_review.py` |
-| 5. Report | All 55 Level A + AA criteria (or 86 with AAA): verdict, a map of every criterion, a page × principle matrix, issues with element, HTML and fix, annotated screenshots and a manual checklist. Web, HTML, PDF and JSON. | `aggregator.py`, `report.py`, `templates/` |
+| 5. Report | All 55 Level A + AA criteria (or 86 with AAA): verdict, a map of every criterion, a page × principle matrix, issues with element, HTML and fix, annotated screenshots and a manual checklist. In the React app, and as HTML, PDF and JSON downloads. | `aggregator.py`, `api.py`, `frontend/src/report/`, `report.py` |
 
 ```
 URL ─► address check (no private networks) ─► robots.txt + sitemap ─► crawl frontier
@@ -165,12 +197,23 @@ Every page records how long each stage took (`timings` in the JSON export), so t
 - The crawler strips tracking parameters (`utm_*`, `fbclid`, ...), orders query strings and scans at most 3 variants of one path, so `/search?q=...` can't eat the page budget.
 - The same broken header on 50 pages is reported as **one element on 50 pages**, not 50 issues.
 
+#### Accessibility of the app itself
+A single-page app has to do what a browser normally does on page loads, so the React app:
+- moves focus to the new page's heading after every navigation and updates the tab title, so screen reader users hear where they are
+- announces scan progress through a polite live region, and moves focus to the report when a scan finishes while someone is watching
+- links each form error to its field (`aria-invalid`, `aria-describedby`), announces it, and puts focus on the field to fix
+- uses real buttons, links, tables and `<details>`, a skip link, labelled landmarks, and keyboard-reachable scroll areas
+
+Every screen is checked three ways: axe-core in the React unit tests, ESLint's jsx-a11y rules, and **the scanner itself, run against the live app in a browser, which must find nothing at all**.
+
 #### Code quality
-Linted and formatted with `ruff`, type-checked with `mypy`, and the tests must keep branch coverage at 90% or more (currently 94%):
 
 ```bash
-.venv/bin/ruff check . && .venv/bin/ruff format --check . && .venv/bin/mypy
+.venv/bin/ruff check . && .venv/bin/ruff format --check . && .venv/bin/mypy   # Python: lint, format, types
+cd frontend && npm run check                                                   # React: types, lint, format, tests
 ```
+
+Python branch coverage must stay at 90% or more (currently 95%). TypeScript runs in strict mode with unchecked index access and exact optional types.
 
 ### Command line
 
@@ -188,36 +231,50 @@ Exit codes let `scan` gate a deployment pipeline: **0** nothing at or above `--f
 |---|---|---|
 | `ANTHROPIC_API_KEY` | (unset) | Enables the AI review layer |
 | `WCAG_SCANNER_DB` | `data/scans.db` | SQLite file for scan history |
-| `WCAG_SCANNER_MAX_PAGES` | 50 | Largest scan the web form accepts |
+| `WCAG_SCANNER_MAX_PAGES` | 50 | Largest scan the API accepts |
 | `WCAG_SCANNER_MAX_ACTIVE` | 10 | Queued + running scans before the app answers 429 |
 | `WCAG_SCANNER_PARALLEL` | 2 | Scans that drive browsers at the same time |
 | `WCAG_SCANNER_ALLOW_PRIVATE` | off | Let the web app scan private addresses (intranet deployments only) |
+| `WCAG_SCANNER_FRONTEND` | `frontend/dist` | Where the built React app is |
+
+**Developing the front end:** run `python -m wcag_scanner serve` in one terminal and `npm run dev` in `frontend/` in another. Vite serves the app with instant reload on http://localhost:5173 and forwards API calls to the Python server.
 
 ### Tests
 
 ```bash
-.venv/bin/python -m pytest                  # everything: about 180 tests, about 1 minute
-.venv/bin/python -m pytest -m "not browser"  # the fast suite: about 150 tests in under a second
+.venv/bin/python -m pytest                  # Python: about 190 tests, about 1 minute
+.venv/bin/python -m pytest -m "not browser"  # the fast suite: about 160 tests in under a second
 .venv/bin/python -m pytest --cov            # with branch coverage
+cd frontend && npm test                     # React: 24 tests in a few seconds
 ```
 
 | Suite | What it proves |
 |---|---|
-| `test_scan.py` | All 16 failures planted in `demo_site/` are found; a clean page has zero failures; **the scanner's own home page and report pass the scanner with nothing to review** |
+| `test_scan.py` | All 16 failures planted in `demo_site/` are found; a clean page has zero failures; **every screen of the live React app, and the downloadable report, pass the scanner with nothing to review** |
 | `test_patterns.py` | Autoplaying sound fails, moving video needs review, an Escape-closable modal is a loop not a trap, fade-in focus and iframes aren't false positives |
 | `test_resilience.py` | 404s, logins, bot walls, non-HTML, server errors, a runaway script, blocked redirects, an unknown host, and Chromium crashing mid-scan |
 | `test_netguard.py` | Every private address range, DNS that resolves inward, redirect hops in HTTP clients, per-scan DNS caching |
 | `test_crawler.py` | URL canonicalisation (including property-based tests with Hypothesis), scope, robots.txt, sitemap indexes, crawl traps |
 | `test_aggregator.py` | Verdict rules, "never pass what wasn't scanned", one result per criterion at A/AA/AAA, cross-page grouping |
-| `test_web.py`, `test_cli.py`, `test_storage.py` | The HTTP flow and every validation path, exit codes, migrations, WAL, crash recovery |
+| `test_web.py`, `test_cli.py`, `test_storage.py` | The API and every validation path, downloads, serving the React app, exit codes, migrations, WAL, crash recovery |
+| `test_contract.py` | The report the API produces matches the fixture the React tests render, so the two sides can't drift apart |
 | `test_ai_review.py` | Every API failure mode degrades to a note; real page inputs reach the model and findings map back to elements |
+| `frontend/src/test/` | The form (options sent, errors announced and focused, server unreachable, demo button), progress, every scan outcome, the report (criteria map, cross-page grouping, unscanned pages, screenshots, downloads), focus and titles on navigation, and axe-core on every screen |
 
 Validated on real sites: GOV.UK and the W3C WAI site score zero failures. The W3C's [inaccessible "before" demo](https://www.w3.org/WAI/demos/bad/before/home.html) fails 7 criteria, and its [fixed "after" version](https://www.w3.org/WAI/demos/bad/after/home.html) fails only the WCAG 2.1/2.2 additions it predates. Scans of BBC, Python.org, Craigslist, a Shopify store and an accessibility company's site were checked by hand, and each false positive found was fixed with a regression test.
 
 ### Project layout
 
 ```
+frontend/          the React app
+  src/pages/       home page, scan page (progress, then report)
+  src/report/      the report's sections
+  src/components/  layout (focus and title handling), icons and status badges
+  src/api.ts       typed API client and data hooks      src/types.ts   the API's shapes
+  src/test/        Vitest + React Testing Library tests
 wcag_scanner/
+  api.py           the JSON API and the report view model
+  web.py           FastAPI app: API, downloads, serves the React app
   criteria.py      all 86 WCAG 2.2 success criteria, and what a person should check for each
   netguard.py      SSRF protection
   crawler.py       which pages to scan
@@ -226,8 +283,8 @@ wcag_scanner/
   interaction.py   layer 2 (Python side)    static/probe.js  layer 2 (in the page)
   sitewide.py      layer 3                  ai_review.py     layer 4
   aggregator.py    layer 5: a verdict per criterion and per page
-  report.py        HTML / PDF rendering     templates/       the web UI and report
-  web.py           FastAPI app              storage.py       SQLite scan history
+  report.py        HTML / PDF downloads     templates/       the downloadable report and the shared stylesheet
+  storage.py       SQLite scan history      settings.py      configuration
 demo_site/         a fake library website with planted failures, each commented "PLANTED"
 docs/              screenshots used in this README
 tests/             unit, integration and browser tests; fixtures/ holds the test pages
@@ -238,7 +295,8 @@ tests/             unit, integration and browser tests; fixtures/ holds the test
 - **axe-core instead of home-made rules.** It's the industry standard (inside Lighthouse and Accessibility Insights) and is tagged with WCAG criteria. The value added here is everything axe can't do: keyboard, zoom, reflow, cross-page and AI judgement, plus mapping all of it onto every criterion.
 - **A real browser, not downloaded HTML.** Contrast, focus, zoom and reflow only exist on a rendered page, and most sites render with JavaScript.
 - **Uncertain means "Needs review", never "Fail".** A tool that cries wolf gets ignored, so every custom check was tuned against real sites.
-- **Server-rendered HTML for the UI.** It works without JavaScript and is easy to make accessible. The scanner's own pages pass the scanner, and a test enforces it.
+- **React for the app, server-rendered documents for the downloads.** The app is interactive (forms, live progress, navigating a long report), so it's React. A downloaded report must work offline, years later, and print to PDF, so it's a self-contained HTML document rendered by the server. Both share one stylesheet, so they look the same.
+- **The report is computed on the server.** The API sends a ready-to-render view (`ReportView`), so the verdict logic exists once, in Python, and the React code only presents it.
 - **SQLite.** Zero setup, one file, plenty for a single-node service. The storage module is small enough to swap for Postgres and a job queue when scaling out.
 
 ### Limitations

@@ -1,0 +1,1320 @@
+{
+  "id": "0123456789ab",
+  "start_url": "https://library.example/",
+  "host": "library.example",
+  "level": "AA",
+  "ai_enabled": true,
+  "finished_at": "2026-10-31T09:01:30+00:00",
+  "axe_version": "4.10.3",
+  "axe_criteria": 3,
+  "notes": [
+    "Respected robots.txt."
+  ],
+  "verdict": {
+    "status": "fail",
+    "title": "Does not meet WCAG 2.2 Level AA",
+    "detail": "4 success criteria fail on at least one page. Fix the failures below, then complete the manual checks before claiming conformance."
+  },
+  "counts": {
+    "fail": 4,
+    "review": 2,
+    "pass": 3,
+    "manual": 41,
+    "na": 5
+  },
+  "fail_findings": 5,
+  "review_findings": 2,
+  "pages_scanned": 2,
+  "pages_with_failures": 2,
+  "principles": [
+    {
+      "number": 1,
+      "name": "Perceivable",
+      "counts": {
+        "fail": 2,
+        "review": 0,
+        "pass": 1,
+        "manual": 12,
+        "na": 5
+      },
+      "criteria": [
+        {
+          "criterion": {
+            "id": "1.1.1",
+            "name": "Non-text Content",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Every image, icon and chart has a text alternative that conveys the same meaning; decorative images are hidden from screen readers.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html"
+          },
+          "status": "fail",
+          "methods": [
+            "Automated rules",
+            "AI review"
+          ],
+          "fails": 1,
+          "reviews": 0,
+          "pages_failing": 1,
+          "has_issues": true
+        },
+        {
+          "criterion": {
+            "id": "1.2.1",
+            "name": "Audio-only and Video-only (Prerecorded)",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Audio-only content has a transcript; silent video has a transcript or audio track.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-only-and-video-only-prerecorded.html"
+          },
+          "status": "na",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.2.2",
+            "name": "Captions (Prerecorded)",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Every prerecorded video with sound has accurate, synchronised captions.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-prerecorded.html"
+          },
+          "status": "na",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.2.3",
+            "name": "Audio Description or Media Alternative (Prerecorded)",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Video has audio description or a full text alternative of what is shown.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-description-or-media-alternative-prerecorded.html"
+          },
+          "status": "na",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.2.4",
+            "name": "Captions (Live)",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Live video streams have real-time captions.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-live.html"
+          },
+          "status": "na",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.2.5",
+            "name": "Audio Description (Prerecorded)",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Prerecorded video has audio description of important visual information.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-description-prerecorded.html"
+          },
+          "status": "na",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.3.1",
+            "name": "Info and Relationships",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Headings, lists, tables and form groups are marked up so their structure is available to screen readers.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html"
+          },
+          "status": "pass",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.3.2",
+            "name": "Meaningful Sequence",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Reading order in the DOM matches the visual, meaningful order.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.3.3",
+            "name": "Sensory Characteristics",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Instructions don't rely only on shape, colour, size, position or sound (e.g. 'click the round button').",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/sensory-characteristics.html"
+          },
+          "status": "manual",
+          "methods": [
+            "AI review"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.3.4",
+            "name": "Orientation",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Content works in both portrait and landscape.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/orientation.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.3.5",
+            "name": "Identify Input Purpose",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Personal-data fields use the correct autocomplete attribute.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.4.1",
+            "name": "Use of Color",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Colour is never the only way information is conveyed (links, errors, required fields, charts).",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html"
+          },
+          "status": "manual",
+          "methods": [
+            "AI review"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.4.2",
+            "name": "Audio Control",
+            "level": "A",
+            "principle": "Perceivable",
+            "what_to_check": "Audio that plays automatically for more than 3 seconds can be paused or muted.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-control.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Media test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.4.3",
+            "name": "Contrast (Minimum)",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Text has at least 4.5:1 contrast (3:1 for large text), including text over images.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html"
+          },
+          "status": "fail",
+          "methods": [
+            "Automated rules"
+          ],
+          "fails": 2,
+          "reviews": 0,
+          "pages_failing": 2,
+          "has_issues": true
+        },
+        {
+          "criterion": {
+            "id": "1.4.4",
+            "name": "Resize Text",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Text can be zoomed to 200% without loss of content or function.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Zoom / reflow test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.4.5",
+            "name": "Images of Text",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Real text is used instead of images of text, except logos.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/images-of-text.html"
+          },
+          "status": "manual",
+          "methods": [
+            "AI review"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.4.10",
+            "name": "Reflow",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "At 320 CSS px wide (400% zoom) content reflows with no horizontal scrolling.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/reflow.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Zoom / reflow test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.4.11",
+            "name": "Non-text Contrast",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Input borders, icons, focus indicators and chart elements have at least 3:1 contrast.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.4.12",
+            "name": "Text Spacing",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Increasing line, letter, word and paragraph spacing doesn't cut off or overlap text.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Zoom / reflow test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "1.4.13",
+            "name": "Content on Hover or Focus",
+            "level": "AA",
+            "principle": "Perceivable",
+            "what_to_check": "Tooltips and popovers can be dismissed with Esc, can be hovered, and stay visible until dismissed.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "name": "Operable",
+      "counts": {
+        "fail": 1,
+        "review": 2,
+        "pass": 1,
+        "manual": 16,
+        "na": 0
+      },
+      "criteria": [
+        {
+          "criterion": {
+            "id": "2.1.1",
+            "name": "Keyboard",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Every function can be operated with the keyboard alone.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Keyboard test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.1.2",
+            "name": "No Keyboard Trap",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Keyboard focus can always be moved away from any component.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Keyboard test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.1.4",
+            "name": "Character Key Shortcuts",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Single-key shortcuts can be turned off, remapped, or only work when the component has focus.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.2.1",
+            "name": "Timing Adjustable",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Time limits can be turned off, adjusted or extended.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.2.2",
+            "name": "Pause, Stop, Hide",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Carousels, animations and auto-updating content can be paused, stopped or hidden.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Media test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.3.1",
+            "name": "Three Flashes or Below Threshold",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Nothing flashes more than three times per second.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/three-flashes-or-below-threshold.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.4.1",
+            "name": "Bypass Blocks",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "A skip link or landmarks let users jump past repeated navigation.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Keyboard test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.4.2",
+            "name": "Page Titled",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Each page has a unique title that describes its topic or purpose.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html"
+          },
+          "status": "pass",
+          "methods": [
+            "Cross-page test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.4.3",
+            "name": "Focus Order",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Tab order follows a logical sequence that preserves meaning.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Keyboard test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.4.4",
+            "name": "Link Purpose (In Context)",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "The purpose of each link is clear from its text or surrounding context.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context.html"
+          },
+          "status": "review",
+          "methods": [
+            "AI review"
+          ],
+          "fails": 0,
+          "reviews": 1,
+          "pages_failing": 0,
+          "has_issues": true
+        },
+        {
+          "criterion": {
+            "id": "2.4.5",
+            "name": "Multiple Ways",
+            "level": "AA",
+            "principle": "Operable",
+            "what_to_check": "There is more than one way to find a page (navigation, search, sitemap).",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/multiple-ways.html"
+          },
+          "status": "review",
+          "methods": [
+            "Cross-page test"
+          ],
+          "fails": 0,
+          "reviews": 1,
+          "pages_failing": 0,
+          "has_issues": true
+        },
+        {
+          "criterion": {
+            "id": "2.4.6",
+            "name": "Headings and Labels",
+            "level": "AA",
+            "principle": "Operable",
+            "what_to_check": "Headings and labels describe their topic or purpose.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/headings-and-labels.html"
+          },
+          "status": "manual",
+          "methods": [
+            "AI review"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.4.7",
+            "name": "Focus Visible",
+            "level": "AA",
+            "principle": "Operable",
+            "what_to_check": "Every focusable element shows a visible focus indicator.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html"
+          },
+          "status": "fail",
+          "methods": [
+            "Keyboard test"
+          ],
+          "fails": 1,
+          "reviews": 0,
+          "pages_failing": 1,
+          "has_issues": true
+        },
+        {
+          "criterion": {
+            "id": "2.4.11",
+            "name": "Focus Not Obscured (Minimum)",
+            "level": "AA",
+            "principle": "Operable",
+            "what_to_check": "Focused elements are never entirely hidden by sticky headers, banners or chat widgets.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Keyboard test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.5.1",
+            "name": "Pointer Gestures",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Multipoint or path-based gestures (pinch, swipe) have a single-pointer alternative.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.5.2",
+            "name": "Pointer Cancellation",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Actions fire on pointer up, not down, or can be aborted.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-cancellation.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.5.3",
+            "name": "Label in Name",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "A control's accessible name contains its visible label text.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/label-in-name.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.5.4",
+            "name": "Motion Actuation",
+            "level": "A",
+            "principle": "Operable",
+            "what_to_check": "Functions triggered by shaking or tilting have a UI alternative and can be disabled.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/motion-actuation.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.5.7",
+            "name": "Dragging Movements",
+            "level": "AA",
+            "principle": "Operable",
+            "what_to_check": "Anything done by dragging can also be done with single clicks.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "2.5.8",
+            "name": "Target Size (Minimum)",
+            "level": "AA",
+            "principle": "Operable",
+            "what_to_check": "Touch targets are at least 24\u00d724 CSS px or have enough spacing.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "name": "Understandable",
+      "counts": {
+        "fail": 1,
+        "review": 0,
+        "pass": 0,
+        "manual": 12,
+        "na": 0
+      },
+      "criteria": [
+        {
+          "criterion": {
+            "id": "3.1.1",
+            "name": "Language of Page",
+            "level": "A",
+            "principle": "Understandable",
+            "what_to_check": "The page's main language is set with the lang attribute.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/language-of-page.html"
+          },
+          "status": "fail",
+          "methods": [
+            "Automated rules"
+          ],
+          "fails": 1,
+          "reviews": 0,
+          "pages_failing": 1,
+          "has_issues": true
+        },
+        {
+          "criterion": {
+            "id": "3.1.2",
+            "name": "Language of Parts",
+            "level": "AA",
+            "principle": "Understandable",
+            "what_to_check": "Passages in a different language are marked with lang.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.2.1",
+            "name": "On Focus",
+            "level": "A",
+            "principle": "Understandable",
+            "what_to_check": "Focusing an element never triggers a change of context (e.g. opening a new page).",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/on-focus.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.2.2",
+            "name": "On Input",
+            "level": "A",
+            "principle": "Understandable",
+            "what_to_check": "Changing a field's value doesn't change context unless the user was warned.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/on-input.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.2.3",
+            "name": "Consistent Navigation",
+            "level": "AA",
+            "principle": "Understandable",
+            "what_to_check": "Repeated navigation appears in the same order on every page.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-navigation.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Cross-page test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.2.4",
+            "name": "Consistent Identification",
+            "level": "AA",
+            "principle": "Understandable",
+            "what_to_check": "Components with the same function are labelled the same way across pages.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-identification.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Cross-page test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.2.6",
+            "name": "Consistent Help",
+            "level": "A",
+            "principle": "Understandable",
+            "what_to_check": "Help links (contact, chat, FAQ) appear in the same relative order on every page.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-help.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Cross-page test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.3.1",
+            "name": "Error Identification",
+            "level": "A",
+            "principle": "Understandable",
+            "what_to_check": "Form errors are identified and described to the user in text.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.3.2",
+            "name": "Labels or Instructions",
+            "level": "A",
+            "principle": "Understandable",
+            "what_to_check": "Form fields have visible labels or instructions.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html"
+          },
+          "status": "manual",
+          "methods": [
+            "Form test"
+          ],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.3.3",
+            "name": "Error Suggestion",
+            "level": "AA",
+            "principle": "Understandable",
+            "what_to_check": "Error messages suggest how to fix the problem.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/error-suggestion.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.3.4",
+            "name": "Error Prevention (Legal, Financial, Data)",
+            "level": "AA",
+            "principle": "Understandable",
+            "what_to_check": "Legal or financial submissions can be reviewed, corrected or reversed.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.3.7",
+            "name": "Redundant Entry",
+            "level": "A",
+            "principle": "Understandable",
+            "what_to_check": "Information already entered in a process is auto-filled or selectable, not re-typed.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/redundant-entry.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "3.3.8",
+            "name": "Accessible Authentication (Minimum)",
+            "level": "AA",
+            "principle": "Understandable",
+            "what_to_check": "Login doesn't require a cognitive test (e.g. remembering or transcribing) unless an alternative exists; paste is allowed.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "name": "Robust",
+      "counts": {
+        "fail": 0,
+        "review": 0,
+        "pass": 1,
+        "manual": 1,
+        "na": 0
+      },
+      "criteria": [
+        {
+          "criterion": {
+            "id": "4.1.2",
+            "name": "Name, Role, Value",
+            "level": "A",
+            "principle": "Robust",
+            "what_to_check": "Custom controls expose the correct name, role and state to assistive technology.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html"
+          },
+          "status": "pass",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        },
+        {
+          "criterion": {
+            "id": "4.1.3",
+            "name": "Status Messages",
+            "level": "AA",
+            "principle": "Robust",
+            "what_to_check": "Status messages (e.g. 'item added to cart') are announced without moving focus.",
+            "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html"
+          },
+          "status": "manual",
+          "methods": [],
+          "fails": 0,
+          "reviews": 0,
+          "pages_failing": 0,
+          "has_issues": false
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "index": 0,
+      "url": "https://library.example/",
+      "title": "Maple Grove Library",
+      "error": null,
+      "fails": 4,
+      "reviews": 1,
+      "fails_by_principle": {
+        "Perceivable": 2,
+        "Operable": 1,
+        "Understandable": 1,
+        "Robust": 0
+      },
+      "reviews_by_principle": {
+        "Perceivable": 0,
+        "Operable": 1,
+        "Understandable": 0,
+        "Robust": 0
+      },
+      "failed_criteria": [
+        "1.1.1",
+        "1.4.3",
+        "2.4.7",
+        "3.1.1"
+      ],
+      "tab_stops": 7,
+      "notes": [],
+      "has_screenshot": true
+    },
+    {
+      "index": 1,
+      "url": "https://library.example/events",
+      "title": "Events",
+      "error": null,
+      "fails": 1,
+      "reviews": 0,
+      "fails_by_principle": {
+        "Perceivable": 1,
+        "Operable": 0,
+        "Understandable": 0,
+        "Robust": 0
+      },
+      "reviews_by_principle": {
+        "Perceivable": 0,
+        "Operable": 0,
+        "Understandable": 0,
+        "Robust": 0
+      },
+      "failed_criteria": [
+        "1.4.3"
+      ],
+      "tab_stops": 12,
+      "notes": [
+        "Dismissed a cookie banner before the keyboard and layout tests."
+      ],
+      "has_screenshot": false
+    },
+    {
+      "index": 2,
+      "url": "https://library.example/members",
+      "title": "",
+      "error": "Needs a login (HTTP 401)",
+      "fails": 0,
+      "reviews": 0,
+      "fails_by_principle": {
+        "Perceivable": 0,
+        "Operable": 0,
+        "Understandable": 0,
+        "Robust": 0
+      },
+      "reviews_by_principle": {
+        "Perceivable": 0,
+        "Operable": 0,
+        "Understandable": 0,
+        "Robust": 0
+      },
+      "failed_criteria": [],
+      "tab_stops": 0,
+      "notes": [],
+      "has_screenshot": false
+    }
+  ],
+  "issues": [
+    {
+      "criterion": {
+        "id": "1.4.3",
+        "name": "Contrast (Minimum)",
+        "level": "AA",
+        "principle": "Perceivable",
+        "what_to_check": "Text has at least 4.5:1 contrast (3:1 for large text), including text over images.",
+        "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html"
+      },
+      "status": "fail",
+      "groups": [
+        {
+          "rule": "color-contrast",
+          "title": "Rule help text",
+          "status": "fail",
+          "impact": "serious",
+          "help_url": "https://dequeuniversity.com/rules/axe/4.10/color-contrast",
+          "fix": null,
+          "occurrences": 2,
+          "elements": 1,
+          "instances": [
+            {
+              "pages": [
+                "https://library.example/",
+                "https://library.example/events"
+              ],
+              "selector": ".notice",
+              "html": "<p class=\"notice\">Library hours change</p>",
+              "message": "Rule help text",
+              "fix": "Fix any of the following: ...",
+              "viewport": "desktop+mobile",
+              "confidence": null,
+              "source": "axe"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "criterion": {
+        "id": "1.1.1",
+        "name": "Non-text Content",
+        "level": "A",
+        "principle": "Perceivable",
+        "what_to_check": "Every image, icon and chart has a text alternative that conveys the same meaning; decorative images are hidden from screen readers.",
+        "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html"
+      },
+      "status": "fail",
+      "groups": [
+        {
+          "rule": "image-alt",
+          "title": "Rule help text",
+          "status": "fail",
+          "impact": "serious",
+          "help_url": "https://dequeuniversity.com/rules/axe/4.10/image-alt",
+          "fix": null,
+          "occurrences": 1,
+          "elements": 1,
+          "instances": [
+            {
+              "pages": [
+                "https://library.example/"
+              ],
+              "selector": "img.hero",
+              "html": "<img src=\"hero.svg\" class=\"hero\">",
+              "message": "Rule help text",
+              "fix": "Fix any of the following: ...",
+              "viewport": "desktop+mobile",
+              "confidence": null,
+              "source": "axe"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "criterion": {
+        "id": "2.4.7",
+        "name": "Focus Visible",
+        "level": "AA",
+        "principle": "Operable",
+        "what_to_check": "Every focusable element shows a visible focus indicator.",
+        "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html"
+      },
+      "status": "fail",
+      "groups": [
+        {
+          "rule": "focus-not-visible",
+          "title": "No visible focus indicator",
+          "status": "fail",
+          "impact": "serious",
+          "help_url": null,
+          "fix": "Don't remove the outline.",
+          "occurrences": 1,
+          "elements": 1,
+          "instances": [
+            {
+              "pages": [
+                "https://library.example/"
+              ],
+              "selector": "nav > a:nth-child(2)",
+              "html": "<a href=\"events.html\">Events</a>",
+              "message": "No visible focus indicator: nothing about 'Events' changes when it receives keyboard focus.",
+              "fix": null,
+              "viewport": null,
+              "confidence": null,
+              "source": "keyboard"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "criterion": {
+        "id": "3.1.1",
+        "name": "Language of Page",
+        "level": "A",
+        "principle": "Understandable",
+        "what_to_check": "The page's main language is set with the lang attribute.",
+        "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/language-of-page.html"
+      },
+      "status": "fail",
+      "groups": [
+        {
+          "rule": "html-has-lang",
+          "title": "Rule help text",
+          "status": "fail",
+          "impact": "serious",
+          "help_url": "https://dequeuniversity.com/rules/axe/4.10/html-has-lang",
+          "fix": null,
+          "occurrences": 1,
+          "elements": 1,
+          "instances": [
+            {
+              "pages": [
+                "https://library.example/"
+              ],
+              "selector": "html",
+              "html": "<html>",
+              "message": "Rule help text",
+              "fix": "Fix any of the following: ...",
+              "viewport": "desktop+mobile",
+              "confidence": null,
+              "source": "axe"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "criterion": {
+        "id": "2.4.4",
+        "name": "Link Purpose (In Context)",
+        "level": "A",
+        "principle": "Operable",
+        "what_to_check": "The purpose of each link is clear from its text or surrounding context.",
+        "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context.html"
+      },
+      "status": "review",
+      "groups": [
+        {
+          "rule": "ai-244",
+          "title": "AI review: unclear link text",
+          "status": "review",
+          "impact": "moderate",
+          "help_url": null,
+          "fix": null,
+          "occurrences": 1,
+          "elements": 1,
+          "instances": [
+            {
+              "pages": [
+                "https://library.example/"
+              ],
+              "selector": "main a",
+              "html": null,
+              "message": "The link text 'click here' is unclear.",
+              "fix": "Describe the destination.",
+              "viewport": null,
+              "confidence": "medium",
+              "source": "ai"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "criterion": {
+        "id": "2.4.5",
+        "name": "Multiple Ways",
+        "level": "AA",
+        "principle": "Operable",
+        "what_to_check": "There is more than one way to find a page (navigation, search, sitemap).",
+        "understanding_url": "https://www.w3.org/WAI/WCAG22/Understanding/multiple-ways.html"
+      },
+      "status": "review",
+      "groups": [
+        {
+          "rule": "multiple-ways",
+          "title": "Only one way to find pages",
+          "status": "review",
+          "impact": "moderate",
+          "help_url": null,
+          "fix": "Add site search.",
+          "occurrences": 1,
+          "elements": 1,
+          "instances": [
+            {
+              "pages": [],
+              "selector": null,
+              "html": null,
+              "message": "Navigation is the only way found to locate pages.",
+              "fix": null,
+              "viewport": null,
+              "confidence": null,
+              "source": "sitewide"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

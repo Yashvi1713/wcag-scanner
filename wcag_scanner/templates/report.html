@@ -14,14 +14,6 @@
     <div><dt>Engine</dt><dd>axe-core {{ scan.axe_version }}</dd></div>
     <div><dt>AI review</dt><dd>{{ "On" if scan.ai_enabled else "Off" }}</dd></div>
   </dl>
-  {% if not standalone %}
-  <p class="downloads">
-    <span>Download</span>
-    <a href="/scans/{{ scan.id }}/report.pdf">{{ icon("down") }} PDF</a>
-    <a href="/scans/{{ scan.id }}/report.html">{{ icon("down") }} HTML</a>
-    <a href="/scans/{{ scan.id }}/report.json">{{ icon("down") }} JSON</a>
-  </p>
-  {% endif %}
 </header>
 
 <div class="report-layout">
@@ -66,7 +58,7 @@
         <li>
           {% if r.groups %}<a class="cell cell-{{ r.status }}" href="#c-{{ r.criterion.id }}" title="{{ r.criterion.id }} {{ r.criterion.name }}: {{ labels[r.status] }}">
           {% else %}<span class="cell cell-{{ r.status }}" title="{{ r.criterion.id }} {{ r.criterion.name }}: {{ labels[r.status] }}">{% endif %}
-            <span>{{ r.criterion.id }}<span class="visually-hidden"> {{ r.criterion.name }}: {{ labels[r.status] }}</span></span>
+            <span>{{ r.criterion.id }} <span class="visually-hidden">{{ r.criterion.name }}: {{ labels[r.status] }}</span></span>
             {{ icon(r.status) }}
           {% if r.groups %}</a>{% else %}</span>{% endif %}
         </li>
